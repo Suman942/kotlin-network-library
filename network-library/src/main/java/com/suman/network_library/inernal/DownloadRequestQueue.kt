@@ -8,4 +8,25 @@ class DownloadRequestQueue(private val dispatchers: DownloadDispatchers) {
         idRequestMap[downloadRequest.downloadId] = downloadRequest
         return dispatchers.enqueue(downloadRequest)
     }
+
+    fun pause(id: Int){
+        idRequestMap[id]?.let {
+            dispatchers.cancel(it)
+        }
+    }
+
+    fun resume(id: Int){
+        idRequestMap[id]?.let {
+            dispatchers.enqueue(it)
+        }
+    }
+
+    fun cancel(id: Int){
+        idRequestMap[id]?.let {
+            dispatchers.cancel(it)
+        }
+        idRequestMap.remove(id)
+    }
+
+
 }

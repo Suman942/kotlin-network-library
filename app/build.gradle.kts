@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.suman.kotlin_network_library"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.suman.kotlin_network_library"
@@ -33,10 +33,14 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        dataBinding= true
+    }
 }
 
 dependencies {
 
+    implementation(project(":network-library"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

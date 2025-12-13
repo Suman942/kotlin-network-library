@@ -1,6 +1,8 @@
 package com.suman.network_library
 
+import com.suman.network_library.inernal.DownloadDispatchers
 import com.suman.network_library.inernal.DownloadRequest
+import com.suman.network_library.inernal.DownloadRequestQueue
 
 class Downloader private constructor(private val downloaderConfig: DownloaderConfig) {
 
@@ -10,11 +12,11 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         }
     }
 
-//    private val requestQueue = DownLoad
+    private val requestQueue = DownloadRequestQueue(DownloadDispatchers(downloaderConfig.httpClient))
     fun newReqBuilder(url: String,dirPath: String,fileName: String) : DownloadRequest.Builder{
         return DownloadRequest.Builder(url,dirPath,fileName)
-            .setReadTimeOut(downloaderConfig.readTimeOut)
-            .setConnectTimeOut(downloaderConfig.connectionTimeOut)
+            .readTimeOut(downloaderConfig.readTimeOut)
+            .connectTimeOut(downloaderConfig.connectionTimeOut)
     }
 
     fun enqueue(
@@ -31,6 +33,6 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         request.onProgress = onProgress
         request.onComplete = onComplete
         request.onError = onError
-        return 0
+        return requestQueue.enqueue(request)
     }
 }

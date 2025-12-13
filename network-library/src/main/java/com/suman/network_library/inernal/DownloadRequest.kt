@@ -40,11 +40,11 @@ class DownloadRequest private constructor(
             this.tag = tag
         }
 
-        fun setReadTimeOut(timeOut: Int) = apply {
+        fun readTimeOut(timeOut: Int) = apply {
             this.readTimeOut = timeOut
         }
 
-        fun setConnectTimeOut(timeout: Int) = apply {
+        fun connectTimeOut(timeout: Int) = apply {
             this.connectTimeOut = timeout
         }
 
