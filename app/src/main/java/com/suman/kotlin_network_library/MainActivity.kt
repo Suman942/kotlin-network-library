@@ -42,6 +42,11 @@ class MainActivity : AppCompatActivity() {
                     downloader.cancel(it)
                 }
             }
+            pauseBtn.setOnClickListener {
+                currentDownloadId?.let {
+                    downloader.pause(it)
+                }
+            }
         }
 
 

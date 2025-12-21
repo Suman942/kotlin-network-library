@@ -44,6 +44,12 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Pause"
+        android:id="@+id/pauseBtn"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/cancelBtn"/>
 

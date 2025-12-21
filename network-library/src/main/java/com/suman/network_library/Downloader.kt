@@ -42,4 +42,8 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         requestQueue.cancel(id)
     }
 
+    fun pause(id: Int){
+        requestQueue.pause(id)
+    }
+
 }
