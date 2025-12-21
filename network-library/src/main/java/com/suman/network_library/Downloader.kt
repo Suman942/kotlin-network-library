@@ -25,6 +25,7 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         onPause:() -> Unit = {},
         onProgress:(value : Int)-> Unit = {_,->},
         onError:(error: String)-> Unit= {_,->},
+        onCancel:()-> Unit = {},
         onComplete:() -> Unit = {}
 
     ):Int{
@@ -33,6 +34,12 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         request.onProgress = onProgress
         request.onComplete = onComplete
         request.onError = onError
+        request.onCancel = onCancel
         return requestQueue.enqueue(request)
     }
+
+    fun cancel(id: Int){
+        requestQueue.cancel(id)
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.suman.network_library.inernal
 
-import android.util.Log
 import com.suman.network_library.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,24 +11,25 @@ class DownloadDispatchers(private val httpClient: HttpClient) {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    fun enqueue(downloadReq: DownloadRequest): Int{
+    fun enqueue(downloadReq: DownloadRequest): Int {
         val job = scope.launch {
-        execute(downloadReq)
+            execute(downloadReq)
         }
         downloadReq.job = job
         return downloadReq.downloadId
     }
 
-    private suspend fun execute(downloadReq: DownloadRequest){
-        DownloadTask(downloadReq,httpClient).run(
+    private suspend fun execute(downloadReq: DownloadRequest) {
+        DownloadTask(downloadReq, httpClient).run(
             onStart = {
-                executeOnMainThread { downloadReq.onStart()}
+                executeOnMainThread { downloadReq.onStart() }
             },
-            onProgress = {executeOnMainThread { downloadReq.onProgress(it)}},
-            onPause = { executeOnMainThread { downloadReq.onPause()}},
-            onError = { executeOnMainThread {downloadReq.onError}},
+            onProgress = { executeOnMainThread { downloadReq.onProgress(it) } },
+            onPause = { executeOnMainThread { downloadReq.onPause() } },
+            onError = { executeOnMainThread { downloadReq.onError("error") } },
+            onCancel = {executeOnMainThread { downloadReq.onCancel() }},
             onComplete = {
-                executeOnMainThread {downloadReq.onComplete()}
+                executeOnMainThread { downloadReq.onComplete() }
             }
         )
     }
@@ -40,11 +40,11 @@ class DownloadDispatchers(private val httpClient: HttpClient) {
         }
     }
 
-    fun cancel(request: DownloadRequest){
+    fun cancel(request: DownloadRequest) {
         request.job.cancel()
     }
 
-    fun cancelAll(){
+    fun cancelAll() {
         scope.cancel()
     }
 }

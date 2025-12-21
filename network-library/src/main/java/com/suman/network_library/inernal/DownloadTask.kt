@@ -13,7 +13,8 @@ class DownloadTask(private val downloadRequest: DownloadRequest,private val http
         onPause:()-> Unit ={},
         onComplete:() -> Unit ={},
         onProgress:(value: Int)-> Unit={_,->},
-        onError:(error:String)-> Unit = {_,->}
+        onError:(error:String)-> Unit = {_,->},
+        onCancel:()-> Unit = {}
     ){
         withContext(Dispatchers.IO) {
             // dummy code for downloading the file

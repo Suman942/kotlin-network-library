@@ -23,9 +23,11 @@ class DownloadRequestQueue(private val dispatchers: DownloadDispatchers) {
 
     fun cancel(id: Int){
         idRequestMap[id]?.let {
+            it.onCancel.invoke()
             dispatchers.cancel(it)
         }
         idRequestMap.remove(id)
+
     }
 
 

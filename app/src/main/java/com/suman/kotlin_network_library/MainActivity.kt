@@ -15,10 +15,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var downloader: Downloader
     private lateinit var request: DownloadRequest
-    val url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivjcWPthi-WHxcwoy7tZK8O4CVv66U55HhVtEzQJedml2pY3xEjX-C8CbtSiB-vZywGNEl05lAXSxkfoo5WBNfXtxabZ2RRNs8vD0IBDoCQfLKBmSaZTkYC8DseoyeklNgP1n8ffvodiQocbhP7Epjpgb162Ydn5lmyNE3PUVJq7l_pjkYB5rtMLbSwqI/s1600/theandroidshow-google-io-2025.png"
-    val downloadsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-
-
+    private val url =
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivjcWPthi-WHxcwoy7tZK8O4CVv66U55HhVtEzQJedml2pY3xEjX-C8CbtSiB-vZywGNEl05lAXSxkfoo5WBNfXtxabZ2RRNs8vD0IBDoCQfLKBmSaZTkYC8DseoyeklNgP1n8ffvodiQocbhP7Epjpgb162Ydn5lmyNE3PUVJq7l_pjkYB5rtMLbSwqI/s1600/theandroidshow-google-io-2025.png"
+    private val downloadsPath =
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+    private var currentDownloadId: Int? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,30 +31,34 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-         downloader = (application as MyApplication).downloader
+        downloader = (application as MyApplication).downloader
 
         binding.apply {
-            btn.setOnClickListener {
-               download()
+            downloadBtn.setOnClickListener {
+                startDownload()
+            }
+            cancelBtn.setOnClickListener {
+                currentDownloadId?.let {
+                    downloader.cancel(it)
+                }
             }
         }
 
 
-
-
-
     }
 
-    private fun download(){
-        request = downloader.newReqBuilder(url,
+    private fun startDownload() {
+        request = downloader.newReqBuilder(
+            url,
             dirPath = downloadsPath,
-            fileName = "$packageName _${System.currentTimeMillis()}")
+            fileName = "$packageName _${System.currentTimeMillis()}"
+        )
             .readTimeOut(Constants.DEFAULT_READ_TIMEOUT_MILLIS)
             .connectTimeOut(Constants.DEFAULT_CONNECT_TIMEOUT_MILLIS)
             .setTag("someTag")
             .build()
 
-        downloader.enqueue(
+        currentDownloadId = downloader.enqueue(
             request,
             onStart = {
                 binding.textViewStatus.text = "onStart"
@@ -65,13 +70,19 @@ class MainActivity : AppCompatActivity() {
             onPause = {
                 binding.textViewStatus.text = "onPause"
             },
-            onComplete = {
-                binding.textViewStatus.text = "onCompleted \n${downloadsPath}"
+
+            onCancel = {
+                binding.textViewStatus.text = "download cancelled"
 
             },
             onError = {
                 binding.textViewStatus.text = it
-            })
+            },
+            onComplete = {
+                binding.textViewStatus.text = "onCompleted \n${downloadsPath}"
+
+            },
+        )
 
     }
 }
