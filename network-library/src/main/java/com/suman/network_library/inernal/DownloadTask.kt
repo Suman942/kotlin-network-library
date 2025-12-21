@@ -11,7 +11,7 @@ class DownloadTask(private val downloadRequest: DownloadRequest,private val http
     suspend fun run(
         onStart:()-> Unit ={},
         onPause:()-> Unit ={},
-        onCompleted:() -> Unit ={},
+        onComplete:() -> Unit ={},
         onProgress:(value: Int)-> Unit={_,->},
         onError:(error:String)-> Unit = {_,->}
     ){
@@ -20,16 +20,18 @@ class DownloadTask(private val downloadRequest: DownloadRequest,private val http
             onStart()
 
             // use of http client
-            httpClient.connect(downloadRequest)
+            httpClient.connect(downloadRequest){read,total->
+                    if (total > 0){
+                        val progress = ((read * 100)/total).toInt()
+                        onProgress(progress)
+                        Log.d("DownloadProgress","progress: $progress")
 
-            // stimulate read data from internet
-            for (i in 1..100) {
-                delay(100)
-                Log.d("DownloadTask","$i")
-                onProgress(i)
+                    }
             }
+            Log.d("DownloadProgress","progress--:")
 
-            onCompleted()
+            onComplete()
+
         }
     }
 }

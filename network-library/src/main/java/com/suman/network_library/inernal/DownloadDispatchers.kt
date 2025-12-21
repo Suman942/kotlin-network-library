@@ -1,5 +1,6 @@
 package com.suman.network_library.inernal
 
+import android.util.Log
 import com.suman.network_library.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +26,11 @@ class DownloadDispatchers(private val httpClient: HttpClient) {
                 executeOnMainThread { downloadReq.onStart()}
             },
             onProgress = {executeOnMainThread { downloadReq.onProgress(it)}},
-            onPause = { executeOnMainThread { downloadReq.onPause}},
+            onPause = { executeOnMainThread { downloadReq.onPause()}},
             onError = { executeOnMainThread {downloadReq.onError}},
-            onCompleted = {executeOnMainThread {downloadReq.onComplete}}
+            onComplete = {
+                executeOnMainThread {downloadReq.onComplete()}
+            }
         )
     }
 

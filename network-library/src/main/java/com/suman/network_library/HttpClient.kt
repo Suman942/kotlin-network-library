@@ -4,5 +4,8 @@ import com.suman.network_library.inernal.DownloadRequest
 
 interface HttpClient {
 
-    fun connect(downloadRequest: DownloadRequest)
+    suspend fun connect(
+        downloadRequest: DownloadRequest,
+        oonBytes: (bytesRead: Long, totalBytes: Long) -> Unit
+    )
 }
