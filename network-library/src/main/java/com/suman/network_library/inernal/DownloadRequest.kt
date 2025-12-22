@@ -12,13 +12,13 @@ class DownloadRequest private constructor(
     internal val readTimeOut: Int,
     internal val connectTimeOut: Int
 ) {
-    internal val totalBytes: Long = 0
-    internal val downloadedBytes: Long = 0
+    internal var totalBytes: Long = 0
+    internal var downloadedBytes: Long = 0
     internal lateinit var job: Job
     internal lateinit var onStart: () -> Unit
     internal lateinit var onProgress: (value: Int) -> Unit
     internal lateinit var onPause: () -> Unit
-    internal lateinit var onResume: () -> Unit
+    internal lateinit var onResume: (value: Long) -> Unit
     internal lateinit var onCancel: () -> Unit
     internal lateinit var onComplete: () -> Unit
     internal lateinit var onError: (error: String) -> Unit

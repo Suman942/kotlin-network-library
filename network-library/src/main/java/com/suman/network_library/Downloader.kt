@@ -26,7 +26,8 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         onProgress:(value : Int)-> Unit = {_,->},
         onError:(error: String)-> Unit= {_,->},
         onCancel:()-> Unit = {},
-        onComplete:() -> Unit = {}
+        onComplete:() -> Unit = {},
+        onResume:(value : Long) -> Unit = {_,->}
 
     ):Int{
         request.onStart = onStart
@@ -35,6 +36,7 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         request.onComplete = onComplete
         request.onError = onError
         request.onCancel = onCancel
+        request.onResume = onResume
         return requestQueue.enqueue(request)
     }
 
@@ -46,4 +48,7 @@ class Downloader private constructor(private val downloaderConfig: DownloaderCon
         requestQueue.pause(id)
     }
 
+    fun resume(id: Int){
+        requestQueue.resume(id)
+    }
 }

@@ -27,17 +27,48 @@ class DefaultHttpClient : HttpClient {
                 readTimeout = downloadRequest.readTimeOut
                 requestMethod = "GET"
                 doInput = true
+
+
+                // resume support
+                if (downloadRequest.downloadedBytes > 0){
+                    setRequestProperty("Range","bytes=${downloadRequest.downloadedBytes}-")
+                }
+
                 connect()
             }
-            val totalBytes = connection.contentLength
-            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+            val contentLength = connection.contentLength
+
+            if (connection.responseCode != HttpURLConnection.HTTP_OK &&
+                connection.responseCode != HttpURLConnection.HTTP_PARTIAL
+            ) {
                 throw Exception("HTTP error code: ${connection.responseCode}")
             }
+
+
             val file = File(downloadRequest.dirPath, downloadRequest.fileName)
-            Log.d("DownloadProgress","file length: ${file.length()}")
+
+
+            // Server ignored Range → restart
+            if (
+                downloadRequest.downloadedBytes > 0 &&
+                connection.responseCode == HttpURLConnection.HTTP_OK
+            ) {
+                downloadRequest.downloadedBytes = 0
+                file.delete()
+            }
+
+
+            val totalBytes = if (connection.responseCode == HttpURLConnection.HTTP_PARTIAL){
+                downloadRequest.downloadedBytes + contentLength
+            }else{
+                contentLength
+            }
+            downloadRequest.totalBytes
+
+            Log.d("DownloadProgress","file length: ${file.length()} -- code: ${connection.responseCode}")
             connection.inputStream.use { inputStream ->
                 file.outputStream().use { outputStream ->
-                    copyInputStreamProgress(inputStream, outputStream, totalBytes.toLong(), onBytes)
+                    copyInputStreamProgress(inputStream, outputStream, downloadRequest.downloadedBytes,totalBytes.toLong(), onBytes)
                 }
             }
         } finally {
@@ -49,12 +80,13 @@ class DefaultHttpClient : HttpClient {
     private suspend fun copyInputStreamProgress(
         input: InputStream,
         output: OutputStream,
+        downloadedBytes: Long,
         totalBytes: Long,
         onBytes: (Long, Long) -> Unit
     ) {
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var bytesRead: Int
-        var downloadedBytes = 0L
+        var _downloadedBytes = downloadedBytes
 
         while (true) {
             coroutineContext.ensureActive()
@@ -62,31 +94,14 @@ class DefaultHttpClient : HttpClient {
             if (bytesRead == -1) break
 
             output.write(buffer, 0, bytesRead)
-            downloadedBytes += bytesRead
+            _downloadedBytes += bytesRead
 
             // Debug logs to help trace issues
-            Log.d("DownloadProgress","Read $bytesRead bytes, total downloaded: $downloadedBytes / $totalBytes")
+            Log.d("DownloadProgress","Read $bytesRead bytes, total downloaded: $_downloadedBytes / $totalBytes")
 
-            onBytes(downloadedBytes, totalBytes)
+            onBytes(_downloadedBytes, totalBytes)
         }
     }
 
 
-//    private suspend fun copyInputStreamProgress(
-//        input: InputStream,
-//        output: OutputStream,
-//        totalBytes: Long,
-//        onBytes: (Long, Long) -> Unit
-//    ) {
-//        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-//        var bytesRead: Int
-//        var downloadedBytes = 0L
-//
-//        while (input.read(buffer).also { bytesRead = it } != -1) {
-//            coroutineContext.ensureActive()
-//            output.write(buffer, 0, bytesRead)
-//            downloadedBytes += bytesRead
-//            onBytes(downloadedBytes, totalBytes)
-//        }
-//    }
 }

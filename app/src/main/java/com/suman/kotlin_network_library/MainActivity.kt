@@ -47,6 +47,12 @@ class MainActivity : AppCompatActivity() {
                     downloader.pause(it)
                 }
             }
+            resumeBtn.setOnClickListener {
+                currentDownloadId?.let {
+                    downloader.resume(it)
+                }
+            }
+
         }
 
 

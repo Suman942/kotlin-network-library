@@ -6,6 +6,6 @@ interface HttpClient {
 
     suspend fun connect(
         downloadRequest: DownloadRequest,
-        oonBytes: (bytesRead: Long, totalBytes: Long) -> Unit
+        onBytes: (bytesRead: Long, totalBytes: Long) -> Unit
     )
 }

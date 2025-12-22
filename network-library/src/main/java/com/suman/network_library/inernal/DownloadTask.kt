@@ -12,9 +12,10 @@ class DownloadTask(private val downloadRequest: DownloadRequest,private val http
         onStart:()-> Unit ={},
         onPause:()-> Unit ={},
         onComplete:() -> Unit ={},
-        onProgress:(value: Int)-> Unit={_,->},
-        onError:(error:String)-> Unit = {_,->},
-        onCancel:()-> Unit = {}
+        onProgress:(value: Int)-> Unit={},
+        onError:(error:String)-> Unit = {},
+        onCancel:()-> Unit = {},
+        onResume:(value : Long) -> Unit = {}
     ){
         withContext(Dispatchers.IO) {
             // dummy code for downloading the file
@@ -22,14 +23,14 @@ class DownloadTask(private val downloadRequest: DownloadRequest,private val http
 
             // use of http client
             httpClient.connect(downloadRequest){read,total->
+                downloadRequest.totalBytes = total
+                downloadRequest.downloadedBytes = read
                     if (total > 0){
                         val progress = ((read * 100)/total).toInt()
                         onProgress(progress)
                         Log.d("DownloadProgress","progress: $progress")
-
                     }
             }
-            Log.d("DownloadProgress","progress--:")
 
             onComplete()
 

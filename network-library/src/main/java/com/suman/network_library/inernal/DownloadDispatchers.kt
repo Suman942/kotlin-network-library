@@ -30,7 +30,9 @@ class DownloadDispatchers(private val httpClient: HttpClient) {
             onCancel = {executeOnMainThread { downloadReq.onCancel() }},
             onComplete = {
                 executeOnMainThread { downloadReq.onComplete() }
-            }
+            },
+            onResume = {}
+
         )
     }
 
