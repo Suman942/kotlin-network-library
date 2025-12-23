@@ -1,9 +1,8 @@
-package com.suman.network_library.inernal
+package com.suman.network_library.internal
 
 import android.util.Log
 import com.suman.network_library.HttpClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class DownloadTask(private val downloadRequest: DownloadRequest,private val httpClient: HttpClient) {

@@ -1,6 +1,6 @@
 package com.suman.network_library
 
-import com.suman.network_library.inernal.DownloadRequest
+import com.suman.network_library.internal.DownloadRequest
 
 interface HttpClient {
 

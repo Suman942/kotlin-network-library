@@ -1,8 +1,8 @@
 package com.suman.network_library
 
-import com.suman.network_library.inernal.DownloadDispatchers
-import com.suman.network_library.inernal.DownloadRequest
-import com.suman.network_library.inernal.DownloadRequestQueue
+import com.suman.network_library.internal.DownloadDispatchers
+import com.suman.network_library.internal.DownloadRequest
+import com.suman.network_library.internal.DownloadRequestQueue
 
 class Downloader private constructor(private val downloaderConfig: DownloaderConfig) {
 

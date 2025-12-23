@@ -1,4 +1,4 @@
-package com.suman.network_library.inernal
+package com.suman.network_library.internal
 
 class DownloadRequestQueue(private val dispatchers: DownloadDispatchers) {
 

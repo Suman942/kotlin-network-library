@@ -1,7 +1,6 @@
 package com.suman.network_library
 
-import android.util.Log
-import com.suman.network_library.inernal.DownloadRequest
+import com.suman.network_library.internal.DownloadRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -46,8 +45,7 @@ class DefaultHttpClient : HttpClient {
 
 
             val file = File(downloadRequest.dirPath, downloadRequest.fileName)
-
-
+            
             // Server ignored Range → restart
             if (
                 downloadRequest.downloadedBytes > 0 &&
@@ -65,7 +63,6 @@ class DefaultHttpClient : HttpClient {
             }
             downloadRequest.totalBytes
 
-            Log.d("DownloadProgress","file length: ${file.length()} -- code: ${connection.responseCode}")
             connection.inputStream.use { inputStream ->
                 file.outputStream().use { outputStream ->
                     copyInputStreamProgress(inputStream, outputStream, downloadRequest.downloadedBytes,totalBytes.toLong(), onBytes)
@@ -97,7 +94,6 @@ class DefaultHttpClient : HttpClient {
             _downloadedBytes += bytesRead
 
             // Debug logs to help trace issues
-            Log.d("DownloadProgress","Read $bytesRead bytes, total downloaded: $_downloadedBytes / $totalBytes")
 
             onBytes(_downloadedBytes, totalBytes)
         }

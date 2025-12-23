@@ -9,7 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.suman.kotlin_network_library.databinding.ActivityMainBinding
 import com.suman.network_library.Constants
 import com.suman.network_library.Downloader
-import com.suman.network_library.inernal.DownloadRequest
+import com.suman.network_library.internal.DownloadRequest
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

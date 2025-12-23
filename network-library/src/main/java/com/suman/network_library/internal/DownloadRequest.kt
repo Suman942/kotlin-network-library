@@ -1,4 +1,4 @@
-package com.suman.network_library.inernal
+package com.suman.network_library.internal
 
 import com.suman.network_library.utils.getUniqueId
 import kotlinx.coroutines.Job
