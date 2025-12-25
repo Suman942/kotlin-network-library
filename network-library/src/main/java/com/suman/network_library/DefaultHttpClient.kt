@@ -27,7 +27,6 @@ class DefaultHttpClient : HttpClient {
                 requestMethod = "GET"
                 doInput = true
 
-
                 // resume support
                 if (downloadRequest.downloadedBytes > 0){
                     setRequestProperty("Range","bytes=${downloadRequest.downloadedBytes}-")
@@ -43,7 +42,6 @@ class DefaultHttpClient : HttpClient {
                 throw Exception("HTTP error code: ${connection.responseCode}")
             }
 
-
             val file = File(downloadRequest.dirPath, downloadRequest.fileName)
             
             // Server ignored Range → restart
@@ -54,7 +52,6 @@ class DefaultHttpClient : HttpClient {
                 downloadRequest.downloadedBytes = 0
                 file.delete()
             }
-
 
             val totalBytes = if (connection.responseCode == HttpURLConnection.HTTP_PARTIAL){
                 downloadRequest.downloadedBytes + contentLength
@@ -68,6 +65,7 @@ class DefaultHttpClient : HttpClient {
                     copyInputStreamProgress(inputStream, outputStream, downloadRequest.downloadedBytes,totalBytes.toLong(), onBytes)
                 }
             }
+
         } finally {
             connection?.disconnect()
         }
