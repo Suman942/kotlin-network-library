@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-internal class DownloadDbHelper(
+internal class DownloadDbHelper (
     context: Context
 ) : SQLiteOpenHelper(
     context, DB_NAME, null, DB_VERSION
@@ -26,14 +26,14 @@ internal class DownloadDbHelper(
 
         private const val CREATE_TABLE_DOWNLOADS = """
             CREATE TABLE downloads (
-            id TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             url TEXT NOT NULL,
             dir_path TEXT NOT NULL,
             file_name TEXT NOT NULL,
             downloaded_bytes INTEGER NOT NULL,
             total_bytes INTEGER,
             tag TEXT,
-            last_modified TEXT,
+            last_modified INTEGER,
             status INTEGER NOT NULL,
             error TEXT,
             updated_at INTEGER NOT NULL

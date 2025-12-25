@@ -1,6 +1,7 @@
 package com.suman.network_library.internal
 
 import com.suman.network_library.HttpClient
+import com.suman.network_library.local_storage.DatabaseHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 class DownloadDispatchers(private val httpClient: HttpClient) {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val databaseHelper: DatabaseHelper = DatabaseHelper.getInstance()
 
     fun enqueue(downloadReq: DownloadRequest): Int {
         val job = scope.launch {
@@ -20,7 +22,8 @@ class DownloadDispatchers(private val httpClient: HttpClient) {
     }
 
     private suspend fun execute(downloadReq: DownloadRequest) {
-        DownloadTask(downloadReq, httpClient).run(
+
+        DownloadTask(downloadReq, httpClient,databaseHelper).run(
             onStart = {
                 executeOnMainThread { downloadReq.onStart() }
             },

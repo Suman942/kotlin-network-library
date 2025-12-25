@@ -1,10 +1,29 @@
 package com.suman.network_library.local_storage
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class DatabaseHelper(private val dbHelper: SQLiteOpenHelper) {
+class DatabaseHelper private constructor(private val dbHelper: SQLiteOpenHelper) {
+
+    companion object {
+        @Volatile
+        private var INSTANCE: DatabaseHelper? = null
+
+        fun initialise(context: Context) {
+            synchronized(this) {
+                if (INSTANCE == null) {
+                    INSTANCE = DatabaseHelper(DownloadDbHelper(context.applicationContext))
+                }
+            }
+        }
+
+        fun getInstance(): DatabaseHelper {
+            return INSTANCE
+                ?: throw IllegalArgumentException(" DatabaseHelper is not initialized. Call initialize(context) first.")
+        }
+    }
 
     private val writableDb get() = dbHelper.writableDatabase
     fun insert(download: DownloadEntity) {
@@ -31,12 +50,12 @@ class DatabaseHelper(private val dbHelper: SQLiteOpenHelper) {
     }
 
     private val readableDb get() = dbHelper.readableDatabase
-    fun getDownloadedBytes(id: String): Long {
+    fun getDownloadedBytes(id: Int): Long {
         val cursor = readableDb.query(
             "downloads",
             arrayOf("downloaded_bytes"),
             "id = ?",
-            arrayOf(id),
+            arrayOf(id.toString()),
             null,
             null,
             null
@@ -47,28 +66,29 @@ class DatabaseHelper(private val dbHelper: SQLiteOpenHelper) {
         }
     }
 
-    fun updateProgress(id: String, downloadedBytes: Long, status: Int? = null) {
+    fun updateProgress(id: Int, downloadedBytes: Long, status: Int? = null,totalBytes: Long) {
         val values = ContentValues().apply {
             put("downloaded_bytes", downloadedBytes)
             status?.let {
                 put("status", it)
             }
             put("updated_at", System.currentTimeMillis())
+            put("total_bytes",totalBytes)
         }
         writableDb.update(
             "downloads",
             values,
             "id=?",
-            arrayOf(id)
+            arrayOf(id.toString())
         )
 
     }
 
-    fun deleteDownload(id: String){
+    fun deleteDownload(id: Int) {
         writableDb.delete(
             "downloads",
             "id=?",
-            arrayOf(id)
+            arrayOf(id.toString())
         )
     }
 

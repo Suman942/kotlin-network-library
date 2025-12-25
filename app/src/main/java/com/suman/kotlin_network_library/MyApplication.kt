@@ -8,6 +8,6 @@ class MyApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        downloader= Downloader.create()
+        downloader= Downloader.create(this)
     }
 }

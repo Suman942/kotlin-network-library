@@ -1,13 +1,21 @@
 package com.suman.network_library
 
+import android.content.Context
 import com.suman.network_library.internal.DownloadDispatchers
 import com.suman.network_library.internal.DownloadRequest
 import com.suman.network_library.internal.DownloadRequestQueue
+import com.suman.network_library.local_storage.DatabaseHelper
 
 class Downloader private constructor(private val downloaderConfig: DownloaderConfig) {
 
     companion object{
-        fun create(downloaderConfig: DownloaderConfig = DownloaderConfig()): Downloader{
+        @Volatile
+        private var isInitialized = false
+        fun create(context:Context,downloaderConfig: DownloaderConfig = DownloaderConfig()): Downloader{
+           if (!isInitialized){
+               DatabaseHelper.initialise(context)
+               isInitialized = true
+           }
             return Downloader(downloaderConfig)
         }
     }
